@@ -23,16 +23,8 @@
 
     input {
       width: 100%;
+      padding: 8px;
       margin-bottom: 10px;
-    }
-
-    button {
-      margin: 5px;
-      padding: 8px 12px;
-      background: #6BAF92;
-      color: white;
-      border: none;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -43,24 +35,20 @@
 <div id="panel">
   <h2>Za3tar Try-On</h2>
 
-  <button onclick="preset('slim')">Slim</button>
-  <button onclick="preset('athletic')">Athletic</button>
-  <button onclick="preset('plus')">Plus</button>
+  <p>Height (cm)</p>
+  <input type="number" id="height" value="170">
 
-  <p>Height</p>
-  <input type="range" id="height" min="150" max="200" value="170">
-
-  <p>Weight</p>
-  <input type="range" id="weight" min="50" max="120" value="70">
+  <p>Weight (kg)</p>
+  <input type="number" id="weight" value="70">
 
   <p>Chest</p>
-  <input type="range" id="chest" min="80" max="120" value="90">
+  <input type="number" id="chest" value="90">
 
   <p>Waist</p>
-  <input type="range" id="waist" min="60" max="110" value="70">
+  <input type="number" id="waist" value="70">
 
   <p>Hips</p>
-  <input type="range" id="hips" min="80" max="130" value="95">
+  <input type="number" id="hips" value="95">
 </div>
 
 <script type="module" src="./js/tryon.js"></script>
