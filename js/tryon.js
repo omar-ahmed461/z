@@ -1,6 +1,7 @@
 import * as THREE from "https://unpkg.com/three@0.158/build/three.module.js";
 import { GLTFLoader } from "https://unpkg.com/three@0.158/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "https://unpkg.com/three@0.158/examples/jsm/controls/OrbitControls.js";
+
 let model;
 
 // Scene
@@ -30,22 +31,27 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const loader = new GLTFLoader();
 loader.load("./models/avatar.glb", (gltf) => {
     model = gltf.scene;
-    model.position.set(0, -1, 0);
-    model.scale.set(1,1,1);
+
+    // center + scale
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3()).length();
+
+    model.position.sub(center);
+    model.scale.setScalar(2 / size);
+
     scene.add(model);
-}, undefined, (error) => {
-    console.error("MODEL ERROR:", error);
 });
 
-// Update scaling
+// Update model based on numbers
 function updateModel() {
     if (!model) return;
 
-    const height = document.getElementById("height").value;
-    const weight = document.getElementById("weight").value;
-    const chest = document.getElementById("chest").value;
-    const waist = document.getElementById("waist").value;
-    const hips = document.getElementById("hips").value;
+    const height = Number(document.getElementById("height").value);
+    const weight = Number(document.getElementById("weight").value);
+    const chest = Number(document.getElementById("chest").value);
+    const waist = Number(document.getElementById("waist").value);
+    const hips = Number(document.getElementById("hips").value);
 
     const heightScale = height / 175;
     const bodyWidth = (chest + waist + hips) / 300;
@@ -55,24 +61,16 @@ function updateModel() {
     model.scale.z += (bodyWidth - model.scale.z) * 0.1;
 }
 
-// Presets
-window.preset = function(type) {
-    if (type === "slim") {
-        height.value = 175; weight.value = 60; chest.value = 85; waist.value = 65; hips.value = 90;
-    }
-    if (type === "athletic") {
-        height.value = 180; weight.value = 80; chest.value = 100; waist.value = 80; hips.value = 100;
-    }
-    if (type === "plus") {
-        height.value = 170; weight.value = 95; chest.value = 115; waist.value = 105; hips.value = 120;
-    }
-};
+// Listen to input changes
+["height","weight","chest","waist","hips"].forEach(id => {
+    document.getElementById(id).addEventListener("input", updateModel);
+});
 
 // Animate
 function animate() {
     requestAnimationFrame(animate);
-    updateModel();
     controls.update();
+    updateModel();
     renderer.render(scene, camera);
 }
 animate();
