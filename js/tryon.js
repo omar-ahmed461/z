@@ -20,9 +20,9 @@ document.getElementById("canvas").appendChild(renderer.domElement);
 // Lights
 scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5));
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-dirLight.position.set(5,5,5);
-scene.add(dirLight);
+const light = new THREE.DirectionalLight(0xffffff, 1.5);
+light.position.set(5,5,5);
+scene.add(light);
 
 // Controls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -32,10 +32,13 @@ const loader = new GLTFLoader();
 loader.load("./models/avatar.glb", (gltf) => {
     model = gltf.scene;
     model.position.set(0, -1, 0);
+    model.scale.set(1,1,1);
     scene.add(model);
+}, undefined, (error) => {
+    console.error("MODEL ERROR:", error);
 });
 
-// Smooth scaling
+// Update scaling
 function updateModel() {
     if (!model) return;
 
@@ -46,7 +49,6 @@ function updateModel() {
     const hips = document.getElementById("hips").value;
 
     const heightScale = height / 175;
-    const weightScale = weight / 100;
     const bodyWidth = (chest + waist + hips) / 300;
 
     model.scale.x += (bodyWidth - model.scale.x) * 0.1;
@@ -65,12 +67,13 @@ window.preset = function(type) {
     if (type === "plus") {
         height.value = 170; weight.value = 95; chest.value = 115; waist.value = 105; hips.value = 120;
     }
-}
+};
 
 // Animate
 function animate() {
     requestAnimationFrame(animate);
     updateModel();
+    controls.update();
     renderer.render(scene, camera);
 }
 animate();
